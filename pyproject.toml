@@ -1,6 +1,9 @@
 [project]
 name = "mindterm"
-version = "0.1.1"
+authors = [
+    { name = "zhou bo", email = "wokspc@gmail.com" }
+]
+version = "0.1.2"
 description = "Intelligent terminal like thinking."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -9,6 +12,13 @@ dependencies = [
     "openai>=1.99.1",
     "rich>=14.1.0",
 ]
+
+[project.scripts]
+mt = "mindterm:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.uv]
 dev-dependencies = [
