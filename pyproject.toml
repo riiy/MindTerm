@@ -1,9 +1,9 @@
 [project]
 name = "mindterm"
 authors = [
-    { name = "zhou bo", email = "wokspc@gmail.com" }
+    { name = "wokspc", email = "wokspc@gmail.com" }
 ]
-version = "0.1.2"
+version = "0.1.4"
 description = "Intelligent terminal like thinking."
 readme = "README.md"
 requires-python = ">=3.11"
