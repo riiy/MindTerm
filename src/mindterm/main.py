@@ -16,7 +16,7 @@ client = OpenAI(
 )
 
 
-def completion(content: str) -> str:
+def completion(content: str) -> str | None:
     completion = client.chat.completions.create(
         model=os.getenv("OPENAI_MODEL", "qwen-plus"),
         messages=[
