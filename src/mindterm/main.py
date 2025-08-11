@@ -1,51 +1,54 @@
-import os
-
+"""Main module for Mind Terminal."""
 from loguru import logger
-from openai import OpenAI
-from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import WordCompleter
 
-_completer = WordCompleter(["\\chat", "\\bye"], ignore_case=True)
-
-
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    base_url=os.getenv(
-        "OPENAI_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
-    ),
-)
-
-
-def completion(content: str) -> str | None:
-    completion = client.chat.completions.create(
-        model=os.getenv("OPENAI_MODEL", "qwen-plus"),
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": content},
-        ],
-    )
-    return completion.choices[0].message.content
+from mindterm.client import LLMClient
+from mindterm.config import config
+from mindterm.ui import TerminalUI
 
 
 def run() -> None:
-    logger.info("start!")
-    session = PromptSession(completer=_completer)
+    """Run the Mind Terminal application."""
+    # Validate configuration
+    if not config.validate():
+        print("Error: OPENAI_API_KEY environment variable is not set.")
+        return
 
+    # Initialize components
+    try:
+        client = LLMClient()
+    except ValueError as e:
+        print(f"Error initializing client: {e}")
+        return
+
+    ui = TerminalUI()
+    ui.display_welcome()
+    logger.info("Mind Terminal started!")
+
+    # Main loop
     while True:
         try:
-            text = session.prompt("> ")
+            text = ui.get_user_input()
         except KeyboardInterrupt:
             continue
         except EOFError:
             break
         else:
+            # Handle built-in commands
             if text == "\\bye":
                 break
-            print("You entered:", completion(text))
-    print("GoodBye!")
+            elif text == "\\help":
+                print("Available commands: \\chat, \\bye, \\help")
+                continue
+
+            # Get and display response
+            response = client.get_completion(text)
+            ui.display_response(response)
+
+    ui.display_goodbye()
 
 
 def main() -> None:
+    """Main entry point."""
     run()
 
 

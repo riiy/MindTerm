@@ -2,7 +2,7 @@
 
 ## Overview
 
-Terminal large language model client implemented using Python
+Terminal large language model client implemented using Python with a modular architecture.
 
 ## Technology Stack
   * Use UV to manage development environments and third-party dependencies.
@@ -15,8 +15,11 @@ Terminal large language model client implemented using Python
 
   * [x] Handle user input
   * [x] Interact with the backend large language model
-  * [ ] write unitests for interact with LLM.
-  * [ ] Beautify terminal display.
+  * [x] Write unit tests for interacting with LLM
+  * [x] Beautify terminal display with Rich formatting
+  * [x] Modular code structure
+  * [x] Configuration management
+  * [x] Error handling
 
 ## Installation
 
@@ -28,9 +31,23 @@ pip install mindterm --user
 
 ## Usage
 
+Set your OpenAI API key as an environment variable:
+
+``` shell
+export OPENAI_API_KEY=your-api-key-here
+```
+
+Then run the application:
+
 ``` shell
 mt
 ```
+
+### Commands
+
+- `\chat` - Start a chat session (default mode)
+- `\bye` - Exit the application
+- `\help` - Show available commands
 
 ## Testing
 
@@ -38,6 +55,22 @@ Tests for the app are included using [pytest](https://docs.pytest.org/). To run 
 
 ```bash
 uv run pytest
+```
+
+## Project Structure
+
+```
+src/
+├── mindterm/
+│   ├── __init__.py
+│   ├── config.py      # Configuration management
+│   ├── client.py      # LLM client
+│   ├── ui.py          # Terminal UI components
+│   ├── commands.py    # Command handling
+│   └── main.py        # Main application logic
+tests/
+├── test_config.py     # Tests for configuration
+└── test_commands.py   # Tests for command handling
 ```
 
 ## Contributing
