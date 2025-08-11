@@ -1,7 +1,10 @@
 """UI components for Mind Terminal."""
+from collections.abc import Generator
+
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
+from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
 
@@ -27,6 +30,39 @@ class TerminalUI:
             )
         else:
             self.console.print(Panel("No response received.", style="red"))
+
+    def display_streamed_response(
+        self, content_generator: Generator[str, None, None]
+    ) -> None:
+        """Display streamed response from the LLM."""
+        # Initialize with a waiting message
+        markdown_text = ""
+        with Live("", refresh_per_second=4) as live:
+            try:
+                for chunk in content_generator:
+                    if chunk is not None:
+                        markdown_text += chunk
+                        # Update live display with rendered markdown in a panel
+                        live.update(
+                            Panel(
+                                Markdown(markdown_text),
+                                title="Assistant",
+                                style="green",
+                            )
+                        )
+                    else:
+                        markdown_text += "\nError occurred during streaming."
+                        live.update(
+                            Panel(
+                                Markdown(markdown_text), title="Assistant", style="red"
+                            )
+                        )
+                        return
+            except Exception as e:
+                markdown_text += f"\nError displaying streamed response: {e}"
+                live.update(
+                    Panel(Markdown(markdown_text), title="Assistant", style="red")
+                )
 
     def get_user_input(self) -> str:
         """Get input from the user."""

@@ -1,6 +1,4 @@
 """Main module for Mind Terminal."""
-from loguru import logger
-
 from mindterm.client import LLMClient
 from mindterm.config import config
 from mindterm.ui import TerminalUI
@@ -22,7 +20,6 @@ def run() -> None:
 
     ui = TerminalUI()
     ui.display_welcome()
-    logger.info("Mind Terminal started!")
 
     # Main loop
     while True:
@@ -42,7 +39,7 @@ def run() -> None:
 
             # Get and display response
             response = client.get_completion(text)
-            ui.display_response(response)
+            ui.display_streamed_response(response)
 
     ui.display_goodbye()
 

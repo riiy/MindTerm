@@ -1,4 +1,6 @@
 """OpenAI client for Mind Terminal."""
+from collections.abc import Generator
+
 from openai import OpenAI
 
 from mindterm.config import config
@@ -20,8 +22,8 @@ class LLMClient:
         )
         self.model = config.model
 
-    def get_completion(self, content: str) -> str | None:
-        """Get completion from the LLM."""
+    def get_completion(self, content: str) -> Generator[str, None, None]:
+        """Get completion from the LLM and stream it to the console."""
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
@@ -29,8 +31,11 @@ class LLMClient:
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": content},
                 ],
+                stream=True,
             )
-            return response.choices[0].message.content
+            for chunk in response:
+                if chunk.choices[0].delta.content is not None:
+                    yield chunk.choices[0].delta.content
         except Exception as e:
             print(f"Error getting completion: {e}")
-            return None
+            return
