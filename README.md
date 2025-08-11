@@ -5,7 +5,7 @@
 Terminal large language model client implemented using Python
 
 ## Technology Stack
-
+  * Use UV to manage development environments and third-party dependencies.
   * Use the [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit) to handle user input and interaction.
   * Interact with the backend large language model service using [openai-python](https://github.com/openai/openai-python)
   * Use the [rich](https://github.com/Textualize/rich) library to beautify terminal display.
@@ -37,7 +37,7 @@ mt
 Tests for the app are included using [pytest](https://docs.pytest.org/). To run the tests, simply execute:
 
 ```bash
-pytest
+uv run pytest
 ```
 
 ## Contributing
@@ -46,4 +46,4 @@ Contributions are welcome! If you have ideas for improvements, bug fixes, or add
 
 ## License
 
-rich-chat-room is open-source software released under the [MIT License](./LICENSE).
+This App is open-source software released under the [MIT License](./LICENSE).
