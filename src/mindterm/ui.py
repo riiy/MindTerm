@@ -2,11 +2,31 @@
 from collections.abc import Generator
 
 from prompt_toolkit import PromptSession
-from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.document import Document
 from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
+
+
+class CommandCompleter(Completer):
+    """Custom completer that only works at the beginning of the line."""
+
+    def __init__(self) -> None:
+        self.commands = ["\\chat", "\\bye"]
+
+    def get_completions(
+        self, document: Document, complete_event: object
+    ) -> Generator[Completion, None, None]:
+        """Generate completions only at the beginning of the line."""
+        # Only provide completions at the beginning of the line
+        if document.text.startswith("\\") and document.cursor_position == len(
+            document.text
+        ):
+            for command in self.commands:
+                if command.startswith(document.text):
+                    yield Completion(command, start_position=-len(document.text))
 
 
 class TerminalUI:
@@ -14,7 +34,7 @@ class TerminalUI:
 
     def __init__(self) -> None:
         """Initialize the terminal UI."""
-        self.completer = WordCompleter(["\\chat", "\\bye"], ignore_case=True)
+        self.completer = CommandCompleter()
         self.session: PromptSession[str] = PromptSession(completer=self.completer)
         self.console = Console()
 
@@ -66,7 +86,8 @@ class TerminalUI:
 
     def get_user_input(self) -> str:
         """Get input from the user."""
-        return str(self.session.prompt("> "))
+        # Only enable completer at the beginning of the line
+        return str(self.session.prompt("> ", completer=self.completer))
 
     def display_goodbye(self) -> None:
         """Display goodbye message."""
