@@ -34,7 +34,7 @@ def run() -> None:
             if text == "\\bye":
                 break
             elif text == "\\help":
-                print("Available commands: \\chat, \\bye, \\help")
+                ui.display_help()
                 continue
 
             # Get and display response

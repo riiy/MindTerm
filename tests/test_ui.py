@@ -12,6 +12,7 @@ def test_command_completer_initialization() -> None:
     assert hasattr(completer, "commands")
     assert "\\chat" in completer.commands
     assert "\\bye" in completer.commands
+    assert "\\help" in completer.commands
 
 
 def test_command_completer_get_completions_at_beginning() -> None:
@@ -24,12 +25,13 @@ def test_command_completer_get_completions_at_beginning() -> None:
     document.cursor_position = 1
 
     completions = list(completer.get_completions(document, None))
-    assert len(completions) == 2  # Should have both commands
+    assert len(completions) == 3  # Should have all three commands
 
     # Check that completions have correct text
     completion_texts = [c.text for c in completions]
     assert "\\chat" in completion_texts
     assert "\\bye" in completion_texts
+    assert "\\help" in completion_texts
 
 
 def test_command_completer_get_completions_partial_match() -> None:
@@ -94,4 +96,9 @@ def test_terminal_ui_get_user_input(mock_prompt_session) -> None:
     result = ui.get_user_input()
 
     assert result == "\\chat"
-    mock_session.prompt.assert_called_once_with("> ", completer=ui.completer)
+    # Check that prompt was called with HTML formatted prompt
+    mock_session.prompt.assert_called_once()
+    call_args = mock_session.prompt.call_args[0]
+    assert "MindTerm" in str(call_args[0])
+    assert ">" in str(call_args[0])
+    assert mock_session.prompt.call_args[1]["completer"] == ui.completer

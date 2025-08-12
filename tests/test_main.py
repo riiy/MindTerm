@@ -52,8 +52,7 @@ def test_run_bye_command(mock_terminal_ui, _mock_llm_client) -> None:
 @patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"})
 @patch("mindterm.main.LLMClient")
 @patch("mindterm.main.TerminalUI")
-@patch("builtins.print")
-def test_run_help_command(mock_print, mock_terminal_ui, _mock_llm_client) -> None:
+def test_run_help_command(mock_terminal_ui, _mock_llm_client) -> None:
     """Test run function with \\help command."""
     with patch("mindterm.main.config") as mock_config:
         mock_config.validate.return_value = True
@@ -68,7 +67,7 @@ def test_run_help_command(mock_print, mock_terminal_ui, _mock_llm_client) -> Non
         # Verify calls
         mock_ui_instance.display_welcome.assert_called_once()
         assert mock_ui_instance.get_user_input.call_count == 2
-        mock_print.assert_called_once_with("Available commands: \\chat, \\bye, \\help")
+        mock_ui_instance.display_help.assert_called_once()
         mock_ui_instance.display_goodbye.assert_called_once()
 
 
